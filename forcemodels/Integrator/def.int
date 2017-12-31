@@ -1,0 +1,50 @@
+PARAMETER FILE FOR IAPG ORBITINTEGRATOR 
+======================================= 
+
+
+year: 2002
+ 
+ 
+month:   8
+ 
+ 
+day:   1
+ 
+ 
+starttime: 0.000000000000
+ 
+ 
+endtime:     86400
+ 
+ 
+pos:  1541188.551940000000000 -6669614.089720000000000 76381.467979700000000 
+vel:  112.497894895000000 113.385146338000000 7637.828744230000000 
+
+ 
+Integrator  2  1.0e-16  1.0e-16
+ 
+ 
+stepsize:  10.0 
+accuracy:  1.0E-16
+
+GRAVITY FIELD CALCULATION
+
+calculation method: Legendre
+transformation earthfixed_inertial: 2
+LMAX:   50
+MMAX:   50
+coefficientfile:  C:\Dokumente und Einstellungen\Thomas Gruber\Eigene Dateien\Vorlesung\Advanced Orbital Mechanics\SS08\Integrator\grim5c1.geo
+Polar Motion
+X_pole: 0.251255
+Y_pole: 0.366786
+
+OUTPUT PARAMETERS: 
+
+Header
+Time[s]
+Inertial Position (X,Y,Z)
+Inertial Velocity (vx,vy,vz)
+SolarPressure
+Output Accuracy: Maximum
+Output non-conservative forces in orbit system
+Output File:  C:\Dokumente und Einstellungen\Thomas Gruber\Eigene Dateien\Vorlesung\Advanced Orbital Mechanics\SS08\Integrator\test.txt
