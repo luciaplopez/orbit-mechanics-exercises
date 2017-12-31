@@ -4,6 +4,8 @@ clear
 clf
 clc
 
+addpath('../keplerianorbits');
+
 %% Parameters
 
 a = 7192 * 1e3; % (m) Semi mayor axis 
@@ -14,32 +16,39 @@ omega = 144.2;  % Argument of the perigee [deg]
 t_0 = 0;  % Perigee passing time
 
 omega_E = 2*pi/86164;  % Earth rotation period [rad/s]
-period = 48*60*60;  % Orbit period [s]
 u = 3.986004418e+14;  % Geocentric gravitational constant: u = GM
+period = 3*2*pi*sqrt(a^3/u);  % Orbit period [s]
 R = 6.371e+6; % Earth radius [m]
 J_2 = 0.00108263;
 
-%% Task 1:
+% Compute initial conditions (t=0)
 
-dt = 60 * 1;
-t = 0:dt:period;
-
-% Load kep2orb
-[r, v, ~, ~] = kep2orb(a, e, t_0, t);
-
-% From polar to cartesian coordinates
-x = r .* cos(v);
-y = r .* sin(v);
+t = 0;
 
 % Load kep2cart
 [rr, dotrr] = kep2cart(a, e, i, raan, omega, t_0,  t);
 
-% Load cart2efix
+%% Task 2: Write program yprime
+
+% Time computation interval
+times = [0 period];
+
+% Initial conditions
+y0 = [rr(:,1); dotrr(:,1)];
+
+% ODE integration options
+options = odeset('InitialStep',5,'MaxStep',5);
+
+% ODE integration
+[t, y] = ode23(@(t,y) yprime(t,y,u), times, y0, options);
+
+% Analitical solution
+[rr, dotrr] = kep2cart(a, e, i, raan, omega, t_0, t);
 [rrr, dotrrr] = cart2efix(rr, dotrr, t);
 
-
 % Plot 
-plot3(rrr(1), rrr(2), rrr(3))
+figure(1)
+plot3(rrr(1, :), rrr(2, :), rrr(3, :))
 hold on
 grid on
 
@@ -49,9 +58,13 @@ ylabel('y(m)')
 zlabel('z(m)')
 title('Trayectory of the Sentinel-3 in Earth-Fixed System')
 
+figure(2)
+hold on
+plot(t, y(:, 1) - rr(1, :)')
+plot(t, y(:, 2) - rr(2, :)')
+plot(t, y(:, 3) - rr(3, :)')
 
-Earth_coast(3)
-
-%% Task 2: write program yprime
-
-% functions ode23, ode45 and ode113
+legend('')
+xlabel('Time sequence (s)')
+ylabel('Difference (m)')
+title('Position with ODE23')
