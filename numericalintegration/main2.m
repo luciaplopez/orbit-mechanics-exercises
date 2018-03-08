@@ -38,7 +38,7 @@ y0 = [rr(:,1); dotrr(:,1)];
 options = odeset('InitialStep',5,'MaxStep',5);
 
 % ODE integration
-[t, y] = ode23(@(t,y) yprime_u(t,y), times, y0,options);
+[t, y] = ode45(@(t,y) yprime_u(t,y), times, y0,options);
 
 % Analitical solution (Task 1)
 [rr, dotrr] = kep2cart(a, e, i, raan, omega, t_0, t);
@@ -73,7 +73,7 @@ plot(t, (y(:, 3) - rr(3, :)') ./ 1000)
 legend('x','y','z')
 xlabel('Time sequence (s)')
 ylabel('Difference (km)')
-title('Position with ODE23')
+title('Position with ODE45')
 
 subplot(2,1,2) 
 hold on
@@ -85,7 +85,7 @@ plot(t, (y(:, 6) - dotrr(3, :)') ./ 1000)
 legend('vx','vy','vz')
 xlabel('Time sequence (s)')
 ylabel('Difference (km/s)')
-title('Velocity with ODE23')
+title('Velocity with ODE45')
 
 
 %% Task 4: Disturbed forces
@@ -121,6 +121,36 @@ ylabel('Difference (km/s)')
 title('Velocity with ODE23')
 
 
+[tt, yy] = ode45(@(tt,yy) yprime_d(tt,yy), times, y0, options);
+
+% Plot disturbed vs undisturbed using ODE45
+figure(5)
+subplot(2,1,1) 
+hold on
+grid on
+plot(tt, (yy(:,1) - y(:,1)) ./ 1000);
+plot(tt, (yy(:,2) - y(:,2)) ./ 1000);
+plot(tt, (yy(:,3) - y(:,3)) ./ 1000);
+
+legend('x','y','z')
+xlabel('Time sequence (s)')
+ylabel('Difference (km)')
+title('Position with ODE45')
+
+subplot(2,1,2) 
+hold on
+grid on
+plot(tt, (yy(:,4) - y(:,4)) ./ 1000);
+plot(tt, (yy(:,5) - y(:,5)) ./ 1000);
+plot(tt, (yy(:,6) - y(:,6)) ./ 1000);
+
+legend('vx','vy','vz')
+xlabel('Time sequence (s)')
+ylabel('Difference (km/s)')
+title('Velocity with ODE45')
+
+
+[tt, yy] = ode23(@(tt,yy) yprime_d(tt,yy), times, y0, options);
 
 % Compute the base unit vectors of the RSW system based on the 
 % unperturbed orbit, i.e. starting from position and velocity vectors:
@@ -197,7 +227,7 @@ plot(tt, delta_r_RSW(3, :) ./ 1000);
 legend('R','S','W')
 xlabel('Time sequence (s)')
 ylabel('Difference (km/s)')
-title('Position disturbed case 0DE23, RWS system')
+title('Position disturbed case 0DE45, RWS system')
 
 subplot(1,2,2) 
 hold on
@@ -208,7 +238,7 @@ plot(tt, delta_v_RSW(3, :) ./ 1000);
 legend('R','S','W')
 xlabel('Time sequence (s)')
 ylabel('Difference (km/s)')
-title('Velocity disturbed case ODE23, RWS system')
+title('Velocity disturbed case ODE45, RWS system')
 
 
 
@@ -228,7 +258,7 @@ plot(t, ye(:,2)-rr(2, :)');
 plot(t, ye(:,3)-rr(3, :)');
 legend('x','y','z')
 xlabel('Time sequence (s)')
-ylabel('Difference (km)')
+ylabel('Difference (km/s)')
 title('Position in Euler integrator')
 
 subplot(2,1,2) 
@@ -244,7 +274,7 @@ title('Velocity in Euler integrator')
 
 
 
-figure(90)
+figure(7)
 subplot(2,1,1) 
 hold on 
 grid on
@@ -253,7 +283,7 @@ plot(t, yk(:, 2)-rr(2, :)');
 plot(t, yk(:, 3)-rr(3, :)');
 legend('x','y','z')
 xlabel('Time sequence (s)')
-ylabel('Difference (km)')
+ylabel('Difference (km/s)')
 title('Position in Runge-Kutta integrator')
 
 
